@@ -10,15 +10,17 @@ using com.LandonKey.SocksWebProxy.Proxy;
 using System.Net;
 using System.Net.Sockets;
 using Npgsql;
-using telegramBot;
+using MyMovieListBot;
  
 
-namespace telegramBot
+namespace MyMovieListBot
 {
     public class Program
     {
         static ITelegramBotClient botClient;
         public static int Count = 0;
+        public static MovieList movieList = new MovieList();
+        public static MovieListService service = new MovieListService();
 
         static void Main()
         {
@@ -55,8 +57,14 @@ namespace telegramBot
                     {
                         new KeyboardButton[]
                         {
-                            new KeyboardButton("Зарегистрироваться"),
-                            new KeyboardButton("Войти"),
+                            new KeyboardButton("Угадать фильм по картинке"),
+                            new KeyboardButton("Записать фильм в список буду смотреть"),
+                            new KeyboardButton("Посмотреть список буду смотреть"),
+                        },
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Поставить оценку просмотренному фильму"),
+                            new KeyboardButton("Посмотреть мои просмотренные фильмы"),
                         }
                     }
                 };
@@ -65,6 +73,95 @@ namespace telegramBot
                     text: "Что вы хотите сделать?",
                     replyMarkup: rkm);
                 return;
+            }
+
+            if (e.Message.Text == "Поставить оценку просмотренному фильму")
+            {
+                movieList = new MovieList();
+                Count = 0;
+                movieList.SenderId = e.Message.From.Id;
+                Count++;
+
+                await botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text: "Название фильма?",
+                    replyMarkup: new ReplyKeyboardRemove() { });
+                return;
+            }
+
+            if(Count == 1)
+            {
+                movieList.Movie = e.Message.Text;
+                Count++;
+
+                var rkm = new ReplyKeyboardMarkup
+                {
+                    Keyboard = new KeyboardButton[][]
+                    {
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("1"),
+                            new KeyboardButton("2"),
+                            new KeyboardButton("3"),
+                            new KeyboardButton("4"),
+                            new KeyboardButton("5"),
+                        },
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("6"),
+                            new KeyboardButton("7"),
+                            new KeyboardButton("8"),
+                            new KeyboardButton("9"),
+                            new KeyboardButton("10"),
+                        }
+                    }
+                };
+
+                await botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text: "Какую оценку ты ему ставишь?",
+                    replyMarkup: rkm);
+                return;
+            }
+
+            if(Count == 2)
+            {
+                movieList.Rating = e.Message.Text;
+                Count = 0;
+
+                service.Save(movieList);
+                await botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "Сохранён");
+
+                var rkm = new ReplyKeyboardMarkup
+                {
+                    Keyboard = new KeyboardButton[][]
+                    {
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Угадать фильм по картинке"),
+                            new KeyboardButton("Записать фильм в список буду смотреть"),
+                            new KeyboardButton("Посмотреть список буду смотреть"),
+                        },
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Поставить оценку просмотренному фильму"),
+                            new KeyboardButton("Посмотреть мои просмотренные фильмы"),
+                        }
+                    }
+                };
+
+                await botClient.SendTextMessageAsync(
+                   chatId: e.Message.Chat,
+                   text: "Что вы хотите сделать?",
+                   replyMarkup: rkm);
+                return;
+            }
+
+            if(e.Message.Text == "Посмотреть мои просмотренные фильмы")
+            {
+                service.Open(movieList);
             }
         }
 
