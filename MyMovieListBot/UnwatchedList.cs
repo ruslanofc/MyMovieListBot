@@ -15,7 +15,7 @@ namespace MyMovieListBot
         public int SenderId { get; set; }
     }
 
-    public class UnwatchedListService : 
+    public class UnwatchedListService 
     {
         private string connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=postgres";
 

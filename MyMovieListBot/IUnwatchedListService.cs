@@ -8,5 +8,6 @@ namespace MyMovieListBot
 {
     interface IUnwatchedListService
     {
+        Save()
     }
 }
