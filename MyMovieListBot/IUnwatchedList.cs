@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace MyMovieListBot
 {
-    interface IUnwatchedListService
+    interface IUnwatchedList
     {
-        Save()
+        void Save(UnwatchedList entity);
+        void Delete(string Movie);
+        List<string> OpenUnwatchedList();
     }
 }

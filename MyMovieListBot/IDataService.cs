@@ -10,7 +10,6 @@ namespace MyMovieListBot
     {
         void Save(MovieList entity);
         void Delete(string Movie);
-        void Update(int id);
-        void Open(MovieList entity);
+        void OpenList();
     }
 }

@@ -10,10 +10,20 @@ namespace MyMovieListBot
 {
     public class MovieList
     {
+        //public MovieList()
+        //{
+        //}
+
+        //public MovieList(string movie)
+        //{
+        //    Movie = movie;
+        //}
+
         public int Id { get; set; }
         public int SenderId { get; set; }
         public string Movie { get; set; }
         public string Rating { get; set; }
+
     }
 
     public class MovieListService : IDataService
@@ -40,24 +50,6 @@ namespace MyMovieListBot
             };
         }
 
-        public void Update(int id)
-        {
-            var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=MyMovieList";
-
-            using (var conn = new NpgsqlConnection(connString))
-            {
-                conn.Open();
-
-                using (var cmd = new NpgsqlCommand())
-                {
-                    //cmd.connection = conn;
-                    //cmd.commandtext = "update mymovielist set class= '" + mymovielist.id.tostring() + "', movie='"
-                    //    + mymovielist.movie + "', rating='" + mymovielist.rating.tostring() + "'";
-                    //cmd.executenonquery();
-                }
-            };
-        }
-
         public void Delete(string Movie)
         {
             var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=MyMovieList";
@@ -75,21 +67,32 @@ namespace MyMovieListBot
             };
         }
 
-        public void Open(MovieList entity)
+        public  void OpenList()
         {
+            var movieList = new List<string>();
+            var command = ($"SELECT movie FROM MyMovieList");
             var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=MyMovieList";
 
             using (var conn = new NpgsqlConnection(connString))
             {
                 conn.Open();
-
-                using (var cmd = new NpgsqlCommand())
+                using (var cmd = new NpgsqlCommand(command, conn))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM MyMovieList ";
-                    cmd.ExecuteNonQuery();
+                    while (reader.Read())
+                    {                       
+                        var movie = reader[0].ToString();
+
+                        movieList.Add(movie);
+                    }
                 }
             };
+
+            foreach (string a in movieList)
+            {
+                Console.WriteLine(a );
+            }
+
         }
     }
 }
