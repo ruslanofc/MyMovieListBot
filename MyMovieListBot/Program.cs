@@ -39,7 +39,7 @@ namespace MyMovieListBot
                             ProxyConfig.SocksVersion.Five,
                             "userid66n9",
                             "pSnEA7M"),
-                        true)
+                        false)
             );
 
             var me = botClient.GetMeAsync().Result;
@@ -48,9 +48,7 @@ namespace MyMovieListBot
             );
             botClient.OnMessage += Bot_OnMessage;
             botClient.StartReceiving();
-            Thread.Sleep(int.MaxValue);
-
-            //SearchGoogle("Криминальное чтиво");
+            Thread.Sleep(int.MaxValue);;
         }
 
         static async void Bot_OnMessage(object sender, MessageEventArgs e)
@@ -192,38 +190,26 @@ namespace MyMovieListBot
 
             if (e.Message.Text == "Посмотреть мои просмотренные фильмы")
             {
-                //List<string> unwatchedList = new List<string>();
+                ListService listService = new ListService();
+                await botClient.SendTextMessageAsync(
+                         chatId: e.Message.Chat,
+                         text: listService.watchedMovieListService(service.OpenList()));
 
-                //foreach(string i in unwatchedListService.OpenUnwatchedList())
-                //{
-                //    unwatchedList.Add(i);
-                //}
+                Thread.Sleep(500);
 
-                //foreach(var a in unwatchedList)
-                //{
-                //    await botClient.SendTextMessageAsync(
-                //        chatId: e.Message.Chat,
-                //        text: a);
-                //}
+                await botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text: "Ваш список фильмов с оценками");
             }
 
             if (e.Message.Text == "Посмотреть список буду смотреть")
             {
 
-                List<string> unwatchedList = new List<string>();
-
-                foreach (string i in unwatchedListService.OpenUnwatchedList())
-                {
-                    unwatchedList.Add(i);
-                }
-
-                foreach (var a in unwatchedList)
-                {
-                    await botClient.SendTextMessageAsync(
-                        chatId: e.Message.Chat,
-                        text: a);
-                }
-
+                ListService listService = new ListService();
+                await botClient.SendTextMessageAsync(
+                         chatId: e.Message.Chat,
+                         text: listService.unwatchedMovieListService(unwatchedListService.OpenUnwatchedList()));
+            
                 Thread.Sleep(500);
 
                 await botClient.SendTextMessageAsync(
@@ -346,35 +332,6 @@ namespace MyMovieListBot
             {
                 e.Message.Text = "/start";
             }
-
-            if(e.Message.Text == "Найти фильм")
-            {
-                SearchGoogle("Криминальное чтиво");
-
-                //movieList = new MovieList();
-                //Count = 0;
-                //movieList.SenderId = e.Message.From.Id;
-                //Count = Count + 100;
-
-                //await botClient.SendTextMessageAsync(
-                //    chatId: e.Message.Chat,
-                //    text: "Название фильма?",
-                //    replyMarkup: new ReplyKeyboardRemove() { });
-                //return;
-            }
-
-            if(Count == 100)
-            {
-                movieList.Movie = e.Message.Text;
-                Count++;
-            }
-
-            
-        }
-
-        public static void SearchGoogle(string query)
-        {
-            Process.Start("http://google.com/search?q=" + query + " " + "Кинопоиск");
         }
 
         private static int GetNextFreePort()

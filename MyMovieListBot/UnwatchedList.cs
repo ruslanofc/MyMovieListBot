@@ -54,23 +54,6 @@ namespace MyMovieListBot
             };
         }
 
-        public void Open(UnwatchedList entity)
-        {
-            var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=UnwatchedList";
-
-            using (var conn = new NpgsqlConnection(connString))
-            {
-                conn.Open();
-
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM UnwatchedList ";
-                    cmd.ExecuteNonQuery();
-                }
-            };
-        }
-
         public List<string> OpenUnwatchedList()
         {
             var movieList = new List<string>();
