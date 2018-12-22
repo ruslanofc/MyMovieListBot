@@ -10,6 +10,7 @@ namespace MyMovieListBot
     {
         void Save(UnwatchedList entity);
         void Delete(string Movie);
-        List<string> OpenUnwatchedList();
+        List<string> OpenUnwatchedList(int a);
+       // bool FilmFactChecking(UnwatchedList entity);
     }
 }

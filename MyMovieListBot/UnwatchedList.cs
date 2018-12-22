@@ -54,10 +54,11 @@ namespace MyMovieListBot
             };
         }
 
-        public List<string> OpenUnwatchedList()
+        public List<string> OpenUnwatchedList(int a)
         {
             var movieList = new List<string>();
-            var command = ($"SELECT movie FROM UnwatchedList");
+            var current_id = a;
+            var command = ($"SELECT movie FROM UnwatchedList WHERE sender_id = "+current_id+" ");
             var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=UnwatchedList";
 
             using (var conn = new NpgsqlConnection(connString))
@@ -77,5 +78,25 @@ namespace MyMovieListBot
 
             return movieList;
         }
+
+        //public bool FilmFactChecking(string a)
+        //{
+        //    var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=UnwatchedList";
+
+        //    var current_film = a;
+
+        //    using (var conn = new NpgsqlConnection(connString))
+        //    {
+        //        conn.Open();
+
+        //        using (var cmd = new NpgsqlCommand())
+        //        {
+        //            cmd.Connection = conn;
+        //            cmd.CommandText = ($"SELECT movie FROM UnwatchedList WHERE movie ="+ current_film +" ");
+        //            cmd.
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    };
+        //}
     }
 }

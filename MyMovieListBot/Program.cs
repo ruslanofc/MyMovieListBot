@@ -20,6 +20,7 @@ namespace MyMovieListBot
     {
         static ITelegramBotClient botClient;
         public static int Count = 0;
+        public static int t = 0;
         public static MovieList movieList = new MovieList();
         public static MovieListService service = new MovieListService();
         public static UnwatchedList unwatchedList = new UnwatchedList();
@@ -193,22 +194,118 @@ namespace MyMovieListBot
                 ListService listService = new ListService();
                 await botClient.SendTextMessageAsync(
                          chatId: e.Message.Chat,
-                         text: listService.watchedMovieListService(service.OpenList()));
+                         text: listService.WatchedMovieListService(service.OpenList(e.Message.From.Id)));
 
                 Thread.Sleep(500);
 
                 await botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
                     text: "Ваш список фильмов с оценками");
+
+                Thread.Sleep(500);
+
+                var rkm = new ReplyKeyboardMarkup
+                {
+                    Keyboard = new KeyboardButton[][]
+                    {
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Найти фильм"),
+                            new KeyboardButton("Записать фильм в список буду смотреть"),
+                            new KeyboardButton("Посмотреть список буду смотреть"),
+                        },
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Поставить оценку просмотренному фильму"),
+                            new KeyboardButton("Посмотреть мои просмотренные фильмы"),
+                        }
+                    }
+                };
+
+                await botClient.SendTextMessageAsync(
+                   chatId: e.Message.Chat,
+                   text: "Что вы хотите сделать?",
+                   replyMarkup: rkm);
+                return;
+
+                //Thread.Sleep(500);
+
+                //await botClient.SendTextMessageAsync(
+                //    chatId: e.Message.Chat,
+                //    text: "Вы можете посмотеть фильмы с определенными оценками либо выйти в главное меню");
+
+                //Thread.Sleep(500);
+
+                //var rkm = new ReplyKeyboardMarkup
+                //{
+                //    Keyboard = new KeyboardButton[][]
+                //    {
+                //        new KeyboardButton[]
+                //        {
+                //            new KeyboardButton("Посмотреть список фильмов с определенными оценками"),
+                //            new KeyboardButton("Выйти в главное меню"),
+                //        }
+                //    }
+                //};
+
+                //await botClient.SendTextMessageAsync(
+                //   chatId: e.Message.Chat,
+                //   text: "Так что же вы хотите сделать?",
+                //   replyMarkup: rkm);
+                //return;
             }
+
+            //if (e.Message.Text == "Посмотреть список фильмов с определенными оценками")
+            //{
+            //    var t = 0;
+            //    var rkm = new ReplyKeyboardMarkup
+            //    {
+            //        Keyboard = new KeyboardButton[][]
+            //        {
+            //            new KeyboardButton[]
+            //            {
+            //                new KeyboardButton("1"),
+            //                new KeyboardButton("2"),
+            //                new KeyboardButton("3"),
+            //                new KeyboardButton("4"),
+            //                new KeyboardButton("5"),
+            //            },
+            //            new KeyboardButton[]
+            //            {
+            //                new KeyboardButton("6"),
+            //                new KeyboardButton("7"),
+            //                new KeyboardButton("8"),
+            //                new KeyboardButton("9"),
+            //                new KeyboardButton("10"),
+            //            }
+            //        }
+            //    };
+
+            //    t++;
+
+            //    await botClient.SendTextMessageAsync(
+            //        chatId: e.Message.Chat,
+            //        text: "С какой оценкой список фильмов тебе нужен?",
+            //        replyMarkup: rkm);
+            //    return;   
+            //}
+
+            //if (t == 1)
+            //{
+            //    ListService listService = new ListService();
+            //    await botClient.SendTextMessageAsync(
+            //             chatId: e.Message.Chat,
+            //             text: listService.WatchedMovieListService(service.ListWithRating(e.Message.From.Id, e.Message.Text)));
+            //}
 
             if (e.Message.Text == "Посмотреть список буду смотреть")
             {
-
+                var t = 0;
+                //unwatchedList = new UnwatchedList();
                 ListService listService = new ListService();
                 await botClient.SendTextMessageAsync(
                          chatId: e.Message.Chat,
-                         text: listService.unwatchedMovieListService(unwatchedListService.OpenUnwatchedList()));
+                         text: listService.UnwatchedMovieListService(unwatchedListService.OpenUnwatchedList(e.Message.From.Id)));
             
                 Thread.Sleep(500);
 
@@ -216,7 +313,7 @@ namespace MyMovieListBot
                     chatId: e.Message.Chat,
                     text: "Ваш список буду смотреть");
 
-                Thread.Sleep(500);
+                
 
                 var rkm = new ReplyKeyboardMarkup
                 {
@@ -229,7 +326,7 @@ namespace MyMovieListBot
                         }
                     }
                 };
-                Count = 0;
+                
 
                 await botClient.SendTextMessageAsync(
                    chatId: e.Message.Chat,
@@ -237,18 +334,17 @@ namespace MyMovieListBot
                    replyMarkup: rkm);
                 return;
             }
-
+            //ТУТ СДЕЛАТЬ ФАКТ ЧЕКИНГ И ПОФИКСИТЬ 
             if (e.Message.Text == "Я посмотрел фильм и хочу поставить ему оценку")
             {
-                Count = Count + 100;
-
+               t++;
                 await botClient.SendTextMessageAsync(
                    chatId: e.Message.Chat,
                    text: "Какой фильм вы посмотрели?");
                 return;
             }
 
-            if(Count == 100)
+            if (t == 1)
             {
                 movieList = new MovieList();
                 service = new MovieListService();
@@ -256,12 +352,14 @@ namespace MyMovieListBot
                 unwatchedList = new UnwatchedList();
                 unwatchedListService = new UnwatchedListService();
 
+                // if()
+
                 unwatchedListService.Delete(e.Message.Text);
 
                 movieList.SenderId = e.Message.From.Id;
                 movieList.Movie = e.Message.Text;
 
-                Count = Count + 100;
+                t++;
 
                 var rkm = new ReplyKeyboardMarkup
                 {
@@ -293,7 +391,7 @@ namespace MyMovieListBot
                 return;
             }
 
-            if(Count == 200)
+            if(t==2)
             {
                 movieList.Rating = e.Message.Text;
                 Count = 0;
@@ -330,7 +428,29 @@ namespace MyMovieListBot
 
             if (e.Message.Text == "Выйти в главное меню")
             {
-                e.Message.Text = "/start";
+                var rkm = new ReplyKeyboardMarkup
+                {
+                    Keyboard = new KeyboardButton[][]
+                   {
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Найти фильм"),
+                            new KeyboardButton("Записать фильм в список буду смотреть"),
+                            new KeyboardButton("Посмотреть список буду смотреть"),
+                        },
+                        new KeyboardButton[]
+                        {
+                            new KeyboardButton("Поставить оценку просмотренному фильму"),
+                            new KeyboardButton("Посмотреть мои просмотренные фильмы"),
+                        }
+                   }
+                };
+
+                await botClient.SendTextMessageAsync(
+                   chatId: e.Message.Chat,
+                   text: "Что вы хотите сделать?",
+                   replyMarkup: rkm);
+                return;
             }
         }
 

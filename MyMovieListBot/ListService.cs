@@ -8,7 +8,7 @@ namespace MyMovieListBot
 {
     class ListService
     {
-        public string unwatchedMovieListService(List<string> unwatchedList)
+        public string UnwatchedMovieListService(List<string> unwatchedList)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -20,7 +20,7 @@ namespace MyMovieListBot
             return sb.ToString();
         }
 
-        public string watchedMovieListService(Dictionary<string,string> watchedList)
+        public string WatchedMovieListService(Dictionary<string,string> watchedList)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("Фильм    Оценка");

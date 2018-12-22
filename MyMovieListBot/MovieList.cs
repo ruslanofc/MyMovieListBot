@@ -55,11 +55,11 @@ namespace MyMovieListBot
             };
         }
 
-        public Dictionary<string,string> OpenList()
+        public Dictionary<string, string> OpenList(int a)
         {
             var movieList = new Dictionary<string, string>();
-
-            var command = ($"SELECT movie, rating FROM MyMovieList");
+            var current_id = a;
+            var command = ($"SELECT movie, rating FROM MyMovieList WHERE sender_id =" + current_id + " ");
             var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=MyMovieList";
 
             using (var conn = new NpgsqlConnection(connString))
@@ -78,5 +78,29 @@ namespace MyMovieListBot
             return movieList;
 
         }
+
+        //public Dictionary<string, string> ListWithRating(int a, string b)
+        //{
+        //    var movieList = new Dictionary<string, string>();
+        //    var current_id = a;
+        //    var current_rating = b;
+        //    var command = ($"SELECT movie, rating FROM MyMovieList WHERE sender_id =" + current_id + " and rating ="+ current_rating.ToString() +" ");
+        //    var connString = "Host=localhost;Port=5432;Username=postgres;Password=123456;Database=MyMovieList";
+
+        //    using (var conn = new NpgsqlConnection(connString))
+        //    {
+        //        conn.Open();
+        //        using (var cmd = new NpgsqlCommand(command, conn))
+        //        using (var reader = cmd.ExecuteReader())
+        //        {
+        //            foreach (var i in reader)
+        //            {
+        //                movieList.Add(reader[0].ToString(), reader[1].ToString());
+        //            }
+        //        }
+        //    };
+
+        //    return movieList;
+        //}
     }
 }
